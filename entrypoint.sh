@@ -25,14 +25,12 @@ echo $GITHUB_REPOSITORY
 OUTPUT=$(gh api repos/$GITHUB_REPOSITORY/branches --jq '.[] | select(.name|test("'$INPUT_DESTINATION_REGEX'")) | .name')
 echo "${OUTPUT}"
 
-readarray -t SOURCE_BRANCHES < <("$(gh api repos/$GITHUB_REPOSITORY/branches --jq '.[] | select(.name|test("'$INPUT_DESTINATION_REGEX'")) | .name')")
+for branch in "${OUTPUT}"
+do
+  echo "This is a branch to merge into:"
+  echo $branch
+done
 
-echo $SOURCE_BRANCHES
+# readarray -t SOURCE_BRANCHES < <("$(gh api repos/$GITHUB_REPOSITORY/branches --jq '.[] | select(.name|test("'$INPUT_DESTINATION_REGEX'")) | .name')")
+# echo $SOURCE_BRANCHES
 
-# # citBranches=$(gh api repos/${{ github.repository }}/branches --jq '.[] | select(.name|test("-cit$")) | .name')
-# # echo 'CIT_BRANCHES='$citBranches >> $GITHUB_ENV
-
-# for branch in "${sourceBranches}"
-# do
-#   echo $branch
-# done
