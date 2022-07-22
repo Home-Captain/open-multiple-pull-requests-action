@@ -22,7 +22,14 @@ echo $INPUT_SOURCE_REGEX
 echo $INPUT_DESTINATION_REGEX
 echo $GITHUB_REPOSITORY
 
-SAFE=$(git config --global --add safe.directory /github/workspace)
+# Identifies this repo as safe
+git config --global --add safe.directory /github/workspace
+
+# Github actions no longer auto set the username and GITHUB_TOKEN
+git remote set-url origin "https://x-access-token:$GITHUB_TOKEN@${GITHUB_SERVER_URL#https://}/$GITHUB_REPOSITORY"
+
+# Pull all branches references down locally so subsequent commands can see them
+git fetch origin '+refs/heads/*:refs/heads/*' --update-head-ok
 
 INPUT_SOURCES=$(gh api repos/$GITHUB_REPOSITORY/branches --jq '.[] | select(.name|test("'$INPUT_SOURCE_REGEX'")) | .name')
 INPUT_DESTINATIONS=$(gh api repos/$GITHUB_REPOSITORY/branches --jq '.[] | select(.name|test("'$INPUT_DESTINATION_REGEX'")) | .name')
@@ -30,21 +37,11 @@ INPUT_DESTINATIONS=$(gh api repos/$GITHUB_REPOSITORY/branches --jq '.[] | select
 echo "${INPUT_SOURCES}"
 echo "${INPUT_DESTINATIONS}"
 
-# gh pr create --base $line --head main; done
-
 # Returns 0 if branches are the same, 1 if else
 diff_branches () {
   # Check if branches are the same
   # $1 source
   # $2 destination
-  echo "Source: $1"
-  echo "Destination: $2"
-
-  REV_S=$(git rev-parse --revs-only "$1")
-  REV_D=$(git rev-parse --revs-only "$2")
-  echo $REV_S
-  echo $REV_D
-
   if [ "$(git rev-parse --revs-only "$1")" = "$(git rev-parse --revs-only "$2")" ];
   then
     echo "Source and destination branches are the same"
