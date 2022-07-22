@@ -46,7 +46,7 @@ do
   do
     diff_branches $source $destination
     echo $DIFF
-    if [[ $DIFF -eq "1" ]];
+    if [[ "$DIFF" == "1" ]];
     then
       if [ $source == "main" ];
       then
