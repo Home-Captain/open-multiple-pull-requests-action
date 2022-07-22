@@ -13,5 +13,9 @@ inputs:
 runs:
   using: 'docker'
   image: 'Dockerfile'
+  args:
+    - ${{ inputs.source-regex }}
+    - ${{ inputs.destination-regex }}
+    - ${{ inputs.github-token }}
   env:
     GITHUB_TOKEN: ${{ inputs.github-token }}
