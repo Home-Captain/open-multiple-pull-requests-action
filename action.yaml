@@ -1,21 +1,21 @@
 name: 'Open Multiple Pull Requests'
 description: 'Specify a matching regex pattern to search for branches to merge changes into'
 inputs:
-  source-regex:
+  source_regex:
     description: 'Source branch regex to match'
     required: true
-  destination-regex:
+  destination_regex:
     description: 'Destination branch regex to match'
     required: true
-  github-token:
+  github_token:
     description: 'The github access token to use gh api commands'
     required: true
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.source-regex }}
-    - ${{ inputs.destination-regex }}
-    - ${{ inputs.github-token }}
+    - ${{ inputs.source_regex }}
+    - ${{ inputs.destination_regex }}
+    - ${{ inputs.github_token }}
   env:
-    GITHUB_TOKEN: ${{ inputs.github-token }}
+    GITHUB_TOKEN: ${{ inputs.github_token }}
