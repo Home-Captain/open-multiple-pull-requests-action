@@ -20,10 +20,11 @@ fi
 
 echo $INPUT_SOURCE_REGEX
 echo $INPUT_DESTINATION_REGEX
+echo $GITHUB_REPOSITORY
 
-# readarray -t sourceBranches < <("$(gh api repos/$GITHUB_REPOSITORY/branches --jq '.[] | select(.name|test("'$INPUT_DESTINATION_REGEX'")) | .name'))"
+readarray -t SOURCE_BRANCHES < <("$(gh api repos/$GITHUB_REPOSITORY/branches --jq '.[] | select(.name|test("'$INPUT_DESTINATION_REGEX'")) | .name'))"
 
-# echo $sourceBranches
+echo $SOURCE_BRANCHES
 
 # # citBranches=$(gh api repos/${{ github.repository }}/branches --jq '.[] | select(.name|test("-cit$")) | .name')
 # # echo 'CIT_BRANCHES='$citBranches >> $GITHUB_ENV
