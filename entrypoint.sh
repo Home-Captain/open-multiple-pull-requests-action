@@ -25,22 +25,23 @@ echo $GITHUB_REPOSITORY
 OUTPUT=$(gh api repos/$GITHUB_REPOSITORY/branches --jq '.[] | select(.name|test("'$INPUT_DESTINATION_REGEX'")) | .name')
 echo "${OUTPUT}"
 
-BRANCHES=$(echo $OUTPUT | tr "\s")
+# BRANCHES=$(echo $OUTPUT | tr "\s")
 
-for branch in $BRANCHES
-do
-  echo "Hey this is split:"
-  echo $branch
-done
+# for branch in $BRANCHES
+# do
+#   echo "Hey this is split:"
+#   echo $branch
+# done
 
 for branch in $OUTPUT
 do
   echo "This is a branch to merge into:"
   echo $branch
+  echo "."
 done
 
-IFS='\s' read -ra BR <<< OUTPUT
-for branch in "${BR[@]}"; do
+read -ra BRANCHES <<< "$OUTPUT"
+for branch in "${BRANCHES[@]}"; do
   echo "Yet another branch to parse:"
   echo $branch
 done
