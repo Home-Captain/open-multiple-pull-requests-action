@@ -2,10 +2,10 @@ name: 'Open Multiple Pull Requests'
 description: 'Specify a matching regex pattern to search for branches to merge into'
 inputs:
   source-regex:
-    description: 'A regex pattern to compare against all your repository's branch names'
+    description: "A regex pattern to compare against all your repository's branch names"
     required: true
   destination-regex:
-    description: 'A regex pattern to compare against all your repository's branch names'
+    description: "A regex pattern to compare against all your repository's branch names"
     required: true
   github-token:
     description: 'The github access token to use gh api commands'
