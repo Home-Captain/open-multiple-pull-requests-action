@@ -68,7 +68,8 @@ do
   do
     echo "Checking diff between $source and $destination..."
     diff_branches $source $destination
-    if [[ $DIFF -eq "1" ]];
+    echo $DIFF
+    if [[ "$DIFF" == "1" ]];
     then
       if [ $source == "main" ];
       then
