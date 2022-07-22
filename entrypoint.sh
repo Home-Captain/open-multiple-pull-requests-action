@@ -22,6 +22,9 @@ echo $INPUT_SOURCE_REGEX
 echo $INPUT_DESTINATION_REGEX
 echo $GITHUB_REPOSITORY
 
+SAFE=$(git config --global --add safe.directory /github/workspace)
+echo $SAFE
+
 INPUT_SOURCES=$(gh api repos/$GITHUB_REPOSITORY/branches --jq '.[] | select(.name|test("'$INPUT_SOURCE_REGEX'")) | .name')
 INPUT_DESTINATIONS=$(gh api repos/$GITHUB_REPOSITORY/branches --jq '.[] | select(.name|test("'$INPUT_DESTINATION_REGEX'")) | .name')
 
