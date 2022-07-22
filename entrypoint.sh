@@ -23,7 +23,6 @@ echo $INPUT_DESTINATION_REGEX
 echo $GITHUB_REPOSITORY
 
 SAFE=$(git config --global --add safe.directory /github/workspace)
-echo $SAFE
 
 INPUT_SOURCES=$(gh api repos/$GITHUB_REPOSITORY/branches --jq '.[] | select(.name|test("'$INPUT_SOURCE_REGEX'")) | .name')
 INPUT_DESTINATIONS=$(gh api repos/$GITHUB_REPOSITORY/branches --jq '.[] | select(.name|test("'$INPUT_DESTINATION_REGEX'")) | .name')
@@ -38,6 +37,14 @@ diff_branches () {
   # Check if branches are the same
   # $1 source
   # $2 destination
+  echo "Source: $1"
+  echo "Destination: $2"
+
+  REV_S=$(git rev-parse --revs-only "$1")
+  REV_D=$(git rev-parse --revs-only "$2")
+  echo $REV_S
+  echo $REV_D
+
   if [ "$(git rev-parse --revs-only "$1")" = "$(git rev-parse --revs-only "$2")" ];
   then
     echo "Source and destination branches are the same"
@@ -48,7 +55,7 @@ diff_branches () {
     LINES_CHANGED=$(git diff --name-only "$2" "$1" -- | wc -l | awk '{print $1}')
     if [[ "$LINES_CHANGED" = "0" ]] && [[ ! "$INPUT_PR_ALLOW_EMPTY" ==  "true" ]];
     then
-      echo "No file changes detected between source and destination branches."
+      echo "No file changes detected between source and destination branches"
       DIFF="0"
       return 1
     fi
@@ -62,6 +69,7 @@ for destination in $INPUT_DESTINATIONS
 do
   for source in $INPUT_SOURCES
   do
+    echo "Checking diff between $source and $destination..."
     diff_branches $source $destination
     if [[ $DIFF -eq "1" ]];
     then
