@@ -41,16 +41,20 @@ diff_branches () {
   if [ "$(git rev-parse --revs-only "$1")" = "$(git rev-parse --revs-only "$2")" ];
   then
     echo "Source and destination branches are the same"
-    return 0
+    DIFF="0"
+    return 1
   else
     # Do not proceed if there are no file differences, this avoids PRs with just a merge commit and no content
     LINES_CHANGED=$(git diff --name-only "$2" "$1" -- | wc -l | awk '{print $1}')
     if [[ "$LINES_CHANGED" = "0" ]] && [[ ! "$INPUT_PR_ALLOW_EMPTY" ==  "true" ]];
     then
       echo "No file changes detected between source and destination branches."
-      return 0
+      DIFF="0"
+      return 1
     fi
   fi
+  echo "Readying to merge changes from ${source} to ${destination}..."
+  DIFF="1"
   return 1
 }
 
@@ -58,7 +62,8 @@ for destination in $INPUT_DESTINATIONS
 do
   for source in $INPUT_SOURCES
   do
-    if [ diff_branches "$source" "$destination" ];
+    diff_branches $source $destination
+    if [[ $DIFF -eq "1" ]];
     then
       if [ $source == "main" ];
       then
