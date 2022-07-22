@@ -1,29 +1,10 @@
 #!/usr/bin/env bash
 
-set -e
-set -o pipefail
+INPUT_SOURCE_REGEX="-cit$"
+INPUT_DESTINATION_REGEX="-uat$"
 
-if [[ -z "$INPUT_GITHUB_TOKEN" ]]; then
-  echo "Set the GITHUB_TOKEN environment variable."
-  exit 1
-fi
-
-if [[ -z "$INPUT_SOURCE_REGEX" ]]; then
-  echo "Set the SOURCE_REGEX environment variable."
-  exit 1
-fi
-
-if [[ -z "$INPUT_DESTINATION_REGEX" ]]; then
-  echo "Set the DESTINATION_REGEX environment variable."
-  exit 1
-fi
-
-echo $INPUT_SOURCE_REGEX
-echo $INPUT_DESTINATION_REGEX
-echo $GITHUB_REPOSITORY
-
-INPUT_SOURCES=$(gh api repos/$GITHUB_REPOSITORY/branches --jq '.[] | select(.name|test("'$INPUT_SOURCE_REGEX'")) | .name')
-INPUT_DESTINATIONS=$(gh api repos/$GITHUB_REPOSITORY/branches --jq '.[] | select(.name|test("'$INPUT_DESTINATION_REGEX'")) | .name')
+INPUT_SOURCES="test-cit test2-cit"
+INPUT_DESTINATIONS="test-uat test2-uat"
 
 echo "${INPUT_SOURCES}"
 echo "${INPUT_DESTINATIONS}"
@@ -45,7 +26,7 @@ do
       then
         # Merge changes from related source branch to related destination branch
         echo "Merging changes from ${source} to ${destination}..."
-        gh pr create --head $source --base $destination --title "Merge changes from ${source} to ${destination}"
+        # gh pr create --head $source --base $destination --title "Merge changes from ${source} to ${destination}"
       fi
     fi
   done
