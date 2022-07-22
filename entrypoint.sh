@@ -22,7 +22,10 @@ echo $INPUT_SOURCE_REGEX
 echo $INPUT_DESTINATION_REGEX
 echo $GITHUB_REPOSITORY
 
-readarray -t SOURCE_BRANCHES < <("$(gh api repos/$GITHUB_REPOSITORY/branches --jq '.[] | select(.name|test("'$INPUT_DESTINATION_REGEX'")) | .name'))"
+OUTPUT=$(gh api repos/$GITHUB_REPOSITORY/branches --jq '.[] | select(.name|test("'$INPUT_DESTINATION_REGEX'")) | .name')
+echo "${OUTPUT}"
+
+readarray -t SOURCE_BRANCHES < <("$(gh api repos/$GITHUB_REPOSITORY/branches --jq '.[] | select(.name|test("'$INPUT_DESTINATION_REGEX'")) | .name')")
 
 echo $SOURCE_BRANCHES
 
