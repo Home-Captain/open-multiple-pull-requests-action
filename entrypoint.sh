@@ -4,17 +4,17 @@ set -e
 set -o pipefail
 
 if [[ -z "$INPUT_GITHUB_TOKEN" ]]; then
-  echo "Set the GITHUB_TOKEN environment variable."
+  echo "Set the github_token environment variable."
   exit 1
 fi
 
 if [[ -z "$INPUT_SOURCE_REGEX" ]]; then
-  echo "Set the SOURCE_REGEX environment variable."
+  echo "Set the input_source_regex environment variable."
   exit 1
 fi
 
 if [[ -z "$INPUT_DESTINATION_REGEX" ]]; then
-  echo "Set the DESTINATION_REGEX environment variable."
+  echo "Set the input_destination_regex environment variable."
   exit 1
 fi
 
