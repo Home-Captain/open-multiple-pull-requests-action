@@ -70,6 +70,7 @@ do
         SRC=$(echo $source | sed "s/$INPUT_SOURCE_REGEX//")
         DST=$(echo $destination | sed "s/$INPUT_DESTINATION_REGEX//")
         if [[ $SRC == $DST ]];
+        then
           # Merge changes from related source branch to related destination branch
           echo "Merging changes from ${source} to ${destination}..."
           PR=$(gh pr create --base $destination --head $source --title "Merge changes from $source to $destination" --body "Opened by bot")
