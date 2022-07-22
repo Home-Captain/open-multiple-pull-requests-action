@@ -1,5 +1,5 @@
 name: 'Open Multiple Pull Requests'
-description: 'Specify a matching regex pattern to search for branches to merge into'
+description: 'Specify a matching regex pattern to search for branches to merge changes into'
 inputs:
   source-regex:
     description: 'Source branch regex to match'
