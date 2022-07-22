@@ -7,6 +7,9 @@ inputs:
   destination_regex:
     description: 'Destination branch regex to match'
     required: true
+  pr_allow_empty:
+    description: 'Allows an empty PR to be merged'
+    required: false
   github_token:
     description: 'The github access token to use gh api commands'
     required: true
@@ -16,6 +19,7 @@ runs:
   args:
     - ${{ inputs.source_regex }}
     - ${{ inputs.destination_regex }}
+    - ${{ inputs.pr_allow_empty }}
     - ${{ inputs.github_token }}
   env:
     GITHUB_TOKEN: ${{ inputs.github_token }}

@@ -48,11 +48,24 @@ do
       DST=$(echo $destination | sed "s/$INPUT_DESTINATION_REGEX//")
       if [[ $SRC == $DST ]];
       then
-        # Merge changes from related source branch to related destination branch
-        echo "Merging changes from ${source} to ${destination}..."
-        echo "gh pr create --base $destination --head $source --fill"
-        PR=$(gh pr create --base $destination --head $source --fill)
-        echo $PR
+        # Check if branches are the same
+        if [ "$(git rev-parse --revs-only "$source")" = "$(git rev-parse --revs-only "$destination")" ];
+        then
+          echo "Source and destination branches are the same"
+        else
+          # Do not proceed if there are no file differences, this avoids PRs with just a merge commit and no content
+          LINES_CHANGED=$(git diff --name-only "$destination" "$source" -- | wc -l | awk '{print $1}')
+          if [[ "$LINES_CHANGED" = "0" ]] && [[ ! "$INPUT_PR_ALLOW_EMPTY" ==  "true" ]];
+          then
+            echo "No file changes detected between source and destination branches."
+          else
+            # Merge changes from related source branch to related destination branch
+            echo "Merging changes from ${source} to ${destination}..."
+            echo "gh pr create --base $destination --head $source --fill"
+            PR=$(gh pr create --base $destination --head $source --fill)
+            echo $PR
+          fi
+        fi
       fi
     fi
   done
