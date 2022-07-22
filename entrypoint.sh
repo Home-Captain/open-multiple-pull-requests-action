@@ -45,7 +45,8 @@ do
       then
         # Merge changes from related source branch to related destination branch
         echo "Merging changes from ${source} to ${destination}..."
-        gh pr create --head $source --base $destination --title "Merge changes from ${source} to ${destination}"
+        PR=$(gh pr create --head $source --base $destination --title "Merge changes from ${source} to ${destination}")
+        echo $PR
       fi
     fi
   done
