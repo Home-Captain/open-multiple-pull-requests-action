@@ -1,6 +1,9 @@
 name: 'Open Multiple Pull Requests'
 description: 'Specify a matching regex pattern to search for branches to merge changes into'
 inputs:
+  main_branch:
+    description: 'Main branch name'
+    required: true
   source_regex:
     description: 'Source branch regex to match'
     required: true
@@ -17,6 +20,7 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
+    - ${{ inputs.main_branch }}
     - ${{ inputs.source_regex }}
     - ${{ inputs.destination_regex }}
     - ${{ inputs.pr_allow_empty }}

@@ -8,6 +8,11 @@ if [[ -z "$INPUT_GITHUB_TOKEN" ]]; then
   exit 1
 fi
 
+if [[ -z "$MAIN_BRANCH" ]]; then
+  echo "Set the main_branch environment variable."
+  exit 1
+fi
+
 if [[ -z "$INPUT_SOURCE_REGEX" ]]; then
   echo "Set the input_source_regex environment variable."
   exit 1
@@ -63,20 +68,25 @@ for destination in $INPUT_DESTINATIONS
 do
   for source in $INPUT_SOURCES
   do
-    echo "Checking diff between $source and $destination..."
-    diff_branches $source $destination
-    if [[ "$DIFF" == "1" ]];
+    if [[ $source == $MAIN_BRANCH ]];
     then
-      if [ $source == "main" ];
+      echo "Checking diff between $source and $destination..."
+      diff_branches $source $destination
+      if [[ "$DIFF" == "1" ]];
       then
         # Merge changes from main to destination branch
         echo "Merging changes from ${source} to ${destination}..."
         PR=$(gh pr create --base $destination --head $source --title "Merge changes from $source to $destination" --body "Opened by bot")
         echo $PR
-      else
-        SRC=$(echo $source | sed "s/$INPUT_SOURCE_REGEX//")
-        DST=$(echo $destination | sed "s/$INPUT_DESTINATION_REGEX//")
-        if [[ $SRC == $DST ]];
+      fi
+    else
+      SRC=$(echo $source | sed "s/$INPUT_SOURCE_REGEX//")
+      DST=$(echo $destination | sed "s/$INPUT_DESTINATION_REGEX//")
+      if [[ $SRC == $DST ]];
+      then
+        echo "Checking diff between $source and $destination..."
+        diff_branches $source $destination
+        if [[ "$DIFF" == "1" ]];
         then
           # Merge changes from related source branch to related destination branch
           echo "Merging changes from ${source} to ${destination}..."
@@ -87,5 +97,34 @@ do
     fi
   done
 done
+
+# for destination in $INPUT_DESTINATIONS
+# do
+#   for source in $INPUT_SOURCES
+#   do
+#     echo "Checking diff between $source and $destination..."
+#     diff_branches $source $destination
+#     if [[ "$DIFF" == "1" ]];
+#     then
+#       if [ $source == "main" ];
+#       then
+#         # Merge changes from main to destination branch
+#         echo "Merging changes from ${source} to ${destination}..."
+#         PR=$(gh pr create --base $destination --head $source --title "Merge changes from $source to $destination" --body "Opened by bot")
+#         echo $PR
+#       else
+#         SRC=$(echo $source | sed "s/$INPUT_SOURCE_REGEX//")
+#         DST=$(echo $destination | sed "s/$INPUT_DESTINATION_REGEX//")
+#         if [[ $SRC == $DST ]];
+#         then
+#           # Merge changes from related source branch to related destination branch
+#           echo "Merging changes from ${source} to ${destination}..."
+#           PR=$(gh pr create --base $destination --head $source --title "Merge changes from $source to $destination" --body "Opened by bot")
+#           echo $PR
+#         fi
+#       fi
+#     fi
+#   done
+# done
 
 echo "Success!"
