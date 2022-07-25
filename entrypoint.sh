@@ -42,7 +42,7 @@ INPUT_DESTINATIONS=$(gh api repos/$GITHUB_REPOSITORY/branches --jq '.[] | select
 echo "${INPUT_SOURCES}"
 echo "${INPUT_DESTINATIONS}"
 
-# Returns 0 if branches are the same, 1 if else
+# Returns 0 if branches are the same or a PR already exists, 1 if else
 diff_branches () {
   # Check if branches are the same
   # $1 source
@@ -61,6 +61,13 @@ diff_branches () {
       DIFF="0"
     fi
   fi
+
+  if [ ! -z "$(git pr list --head $1 --base $2)" ];
+  then
+    echo "A PR is already open from $1 to $2"
+    DIFF="0"
+  fi  
+
   echo "Readying to merge changes from ${source} to ${destination}..."
 }
 
@@ -76,7 +83,7 @@ do
       then
         # Merge changes from main to destination branch
         echo "Merging changes from ${source} to ${destination}..."
-        PR=$(gh pr create --base $destination --head $source --title "Merge changes from $source to $destination" --body "Opened by bot")
+        PR=$(gh pr create --base $destination --head $source --title "Merge changes from $source to $destination" --body "Opened by workflow")
         echo $PR
       fi
     else
@@ -90,41 +97,12 @@ do
         then
           # Merge changes from related source branch to related destination branch
           echo "Merging changes from ${source} to ${destination}..."
-          PR=$(gh pr create --base $destination --head $source --title "Merge changes from $source to $destination" --body "Opened by bot")
+          PR=$(gh pr create --base $destination --head $source --title "Merge changes from $source to $destination" --body "Opened by workflow")
           echo $PR
         fi
       fi
     fi
   done
 done
-
-# for destination in $INPUT_DESTINATIONS
-# do
-#   for source in $INPUT_SOURCES
-#   do
-#     echo "Checking diff between $source and $destination..."
-#     diff_branches $source $destination
-#     if [[ "$DIFF" == "1" ]];
-#     then
-#       if [ $source == "main" ];
-#       then
-#         # Merge changes from main to destination branch
-#         echo "Merging changes from ${source} to ${destination}..."
-#         PR=$(gh pr create --base $destination --head $source --title "Merge changes from $source to $destination" --body "Opened by bot")
-#         echo $PR
-#       else
-#         SRC=$(echo $source | sed "s/$INPUT_SOURCE_REGEX//")
-#         DST=$(echo $destination | sed "s/$INPUT_DESTINATION_REGEX//")
-#         if [[ $SRC == $DST ]];
-#         then
-#           # Merge changes from related source branch to related destination branch
-#           echo "Merging changes from ${source} to ${destination}..."
-#           PR=$(gh pr create --base $destination --head $source --title "Merge changes from $source to $destination" --body "Opened by bot")
-#           echo $PR
-#         fi
-#       fi
-#     fi
-#   done
-# done
 
 echo "Success!"
