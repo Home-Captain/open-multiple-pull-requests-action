@@ -8,7 +8,7 @@ if [[ -z "$INPUT_GITHUB_TOKEN" ]]; then
   exit 1
 fi
 
-if [[ -z "$MAIN_BRANCH" ]]; then
+if [[ -z "$INPUT_MAIN_BRANCH" ]]; then
   echo "Set the main_branch environment variable."
   exit 1
 fi
@@ -68,7 +68,7 @@ for destination in $INPUT_DESTINATIONS
 do
   for source in $INPUT_SOURCES
   do
-    if [[ $source == $MAIN_BRANCH ]];
+    if [[ $source == $INPUT_MAIN_BRANCH ]];
     then
       echo "Checking diff between $source and $destination..."
       diff_branches $source $destination
