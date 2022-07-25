@@ -62,7 +62,7 @@ diff_branches () {
     fi
   fi
 
-  if [ ! -z "$(git pr list --head $1 --base $2)" ];
+  if [ ! -z "$(gh pr list --head $1 --base $2)" ];
   then
     echo "A PR is already open from $1 to $2"
     DIFF="0"
